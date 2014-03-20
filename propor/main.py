@@ -9,9 +9,9 @@ Alessandro: Usando as listas de frequência (que a Marcely já calculou) gerar l
     (1) com todas as palavras (lemmas) anotados com: 
         [ x ]frequência nos corpus simples, 
         [ x ]freq nos corpus complexos, 
-        [  ]freq total, 
-        [  ]probabilidade de simples (freq simples/freq total), 
-        [  ]prob de complexo (freq complexo/freq total);
+        [ x ]freq total, 
+        [ x ]probabilidade de simples (freq simples/freq total), 
+        [ x ]prob de complexo (freq complexo/freq total);
 
     (2) lista das palavras que ocorrem em textos simples e não em complexos e 
         as que ocorrem em complexos e não em simples (colocando ao lado da palavra 
@@ -61,6 +61,51 @@ def read_corpora(filename):
 
     return tokens_list
 
+def save_output(simple_dict, complex_dict, total_dict, simple_prob, complex_prob, simple_words, complex_words):
+    """ Take all data and save a file within.
+    """
+    out = []
+    with open('output/saida.csv', 'w+') as f:
+        f.write("lemma \t tamanho \t freq_simples \t freq_complexo \t freq_total \t prob_simples \t prob_complexo \t tipo \n")
+ 
+        for key in sorted(total_dict.keys()):
+            out.append(str(key)) 
+            out.append(str(len(key)))
+
+            if simple_dict.has_key(key):
+                out.append(str(simple_dict[key]))
+            else:
+                out.append(str(0))
+    
+            if complex_dict.has_key(key):
+                out.append(str(complex_dict[key]))
+            else:
+                out.append(str(0))
+    
+            out.append(str(total_dict[key]))
+    
+            if simple_prob.has_key(key):
+                out.append(str(simple_prob[key]))
+            else:
+                out.append(str(0))
+    
+            if complex_prob.has_key(key):
+                out.append(str(complex_prob[key]))
+            else:
+                out.append(str(0))
+
+            if key in simple_words:
+                out.append("S")
+            elif key in complex_words:
+                out.append("C")
+
+            f.write("\t".join(out))
+            f.write("\n")
+            
+            out = []
+
+    print "Arquivo salvo com sucesso na pasta output"
+
 def construct_frequency_dict(filenames):
     """ Construct a new dictionary with all lemmas for a set of corpora.
     """
@@ -76,7 +121,6 @@ def construct_frequency_dict(filenames):
 
     return deepcopy(freq_dict)
 
-#http://stackoverflow.com/questions/17403371/how-can-i-fix-valueerror-too-many-values-to-unpack-in-python
 def merge_dict(dicta, dictb):
     """ Merge two dictionaries that contains tokens and frequency, returning a new dictionary.
     """
@@ -90,30 +134,65 @@ def merge_dict(dicta, dictb):
 
     return deepcopy(freq_dict)
 
+def construct_probability_dict(dicta, dictt):
+    """ Take two dictionaries of word frequencies and construct a new dictionary 
+        with probability for the containing words.
+        
+        dicta contains the choice word frequencies
+        dictt contains the total word frequencies
+    """
+    prob_dict = deepcopy(dicta)
+
+    for key in prob_dict.keys():
+        prob_dict[key] = prob_dict[key]/float(dictt[key])
+
+    return prob_dict
+
+def construct_not_containing_words(dicta, dictb):
+    """ Search words in a dictionary that are not contained in another dict. 
+        
+        dicta the searched words
+        dictb the another dictionary
+    """
+    words = []
+
+    for key in dicta.keys():
+        if not dictb.has_key(key):
+            words.append(key)
+
+    return words
+
 def main():
-    simple_corpora = ["corpora/Corpora_DG/Corpora_DG.freq", "corpora/Corpora_infantil/Corpora_infantil.freq"]
-    complex_corpora = ["corpora/Corpora_machado/Corpora_machado.freq", "corpora/Corpora_Europarl/Corpora_Europarl.freq"]
+    simple_corpora = ["corpora/Corpora_DG/Corpora_DG.freq", "corpora/Corpora_infantil/Corpora_infantil.freq", "corpora/Corpora_ZH/zh.natural.corpus.freq"]
+    complex_corpora = ["corpora/Corpora_machado/Corpora_machado.freq", "corpora/Corpora_Europarl/Corpora_Europarl.freq", "corpora/Corpora_ZH/zh.normal.corpus.freq"]
 
-    #corpora_file = ""
-    #corpora_file = open(filename)
-
-    # Keeps the lemma and frequency for simple corpora: Childes, DG, Folha SP, infantil, ZH
+    # Keeps the lemma and frequency for simple corpora: Childes, DG, infantil, ZH simplificado
     simple_dict = construct_frequency_dict(simple_corpora)
-    # Keeps the lemma and frequency for complex corpora: Machado, Europarl
+    # Keeps the lemma and frequency for complex corpora: Machado, Europarl, Folha SP, ZH normal
     complex_dict = construct_frequency_dict(complex_corpora)
     # Keeps the lemma and frequency for all corpora
     total_dict = merge_dict(simple_dict, complex_dict)
-    print len(simple_dict)
-    print len(complex_dict)
-    print len(total_dict)
+    
+    # Keeps the simple lemma and their probability to stand in total corpora
+    simple_prob = construct_probability_dict(simple_dict, total_dict)
+    # Keeps the complex lemma and their probability to stand in total corpora
+    complex_prob = construct_probability_dict(complex_dict, total_dict)
 
-    # print ordered dict
-    #for key in sorted(mydict.iterkeys()):
-    #    print "%s: %s" % (key, mydict[key])
+    # Keeps the simple lemma that not exists in complex corpora
+    simple_words = construct_not_containing_words(simple_dict, complex_dict)
+    # Keeps the complex lemma that not exists in simple corpora
+    complex_words = construct_not_containing_words(complex_dict, simple_dict)
 
-    #sentence = """At eight o'clock on Thursday morning Arthur didn't feel very good."""
-    #tokens = nltk.word_tokenize(sentence)
-
+    print "simple_dict", len(simple_dict)
+    print "complex_dict", len(complex_dict)
+    print "total_dict", len(total_dict)
+    
+    print "simple_prob", len(simple_prob)
+    print "complex_prob", len(complex_prob)
+    
+    print "simple_words", len(simple_words)
+    print "complex_words", len(complex_words)
+    save_output(simple_dict, complex_dict, total_dict, simple_prob, complex_prob, simple_words, complex_words)
 
 if __name__ == "__main__":
     main()
