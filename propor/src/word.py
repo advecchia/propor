@@ -4,7 +4,7 @@ class Word:
     """
     def __init__(self, corpus_name, lemma, pos, corpus_frequency, synstets):
         # The name of the corpus that originated this lemma
-        self._corpus_name = corpus_name
+        self._corpus_name = set(corpus_name)
         # The lemma of the based word
         self._lemma = lemma
         # The size of the lemma
@@ -27,6 +27,9 @@ class Word:
     @corpus_name.setter
     def corpus_name(self, corpus_name):
         self._corpus_name = corpus_name
+
+    def add_corpus_name(self, corpus_name):
+        self._corpus_name |= corpus_name
 
     @property
     def lemma(self):
@@ -59,6 +62,9 @@ class Word:
     @corpus_frequency.setter
     def corpus_frequency(self, corpus_frequency):
         self._corpus_frequency = corpus_frequency
+
+    def add_corpus_frequency(self, corpus_frequency):
+        self._corpus_frequency += corpus_frequency
 
     @property
     def relative_probability(self):
@@ -98,3 +104,6 @@ class Word:
 
     def synstets_number(self):
         return len(self.synstets)
+    
+    def add_synstets(self, synstets):
+        self._synstets |= synstets

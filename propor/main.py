@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-import nltk
 from copy import deepcopy
 from collections import defaultdict
 
@@ -27,27 +26,6 @@ Alessandro: Usando as listas de frequência (que a Marcely já calculou) gerar l
     freq da palavra no childes.
 """
 
-PORTER = 1
-WORD_NET = 2
-RSLP = 3
-
-def lemmatize(tokens, stemmer):
-    """ Lemmatizes each token in a list of tokens.
-    
-        stemmer is the used algorithm. For english use PORTER or WORD_NET,
-        for portuguese use RSLP (Viviane Orengo approach).
-    """
-    if stemmer == PORTER:
-        porter = nltk.PorterStemmer()
-        lemmas = [porter.stem(t) for t in tokens]
-    elif stemmer == WORD_NET:
-        wnl = nltk.WordNetLemmatizer()
-        lemmas = [wnl.lemmatize(t) for t in tokens]
-    else:
-        rslp = nltk.RSLPStemmer()
-        lemmas = [rslp.stem(token.decode('utf8')) for token in tokens]
-
-    return lemmas
 
 def read_corpora(filename):
     """ Open the corpora file and return a list of lists of the tokens with their frequency. 
@@ -269,7 +247,7 @@ def save_output_arff(simple_dict, complex_dict, total_dict, simple_relative, com
     %
     % 3. Corpora:
     %    (a) Simple: Diario Gaucho (30 + 70), Infantil, Zero Hora simplificado
-    %    (b) Complex: Machadostr(total_dict[key][1])), Europarl, Folha de São Paulo, Zero Hora
+    %    (b) Complex: Machado, Europarl, Folha de São Paulo, Zero Hora
     %    (c) Baseline: Childes, BrWac
     %
     % word lemma

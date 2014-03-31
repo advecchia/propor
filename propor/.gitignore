@@ -1,6 +1,7 @@
 .metadata
 corpora
 output
+memory
 bin
 *~
 .project
