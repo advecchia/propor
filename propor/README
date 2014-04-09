@@ -7,8 +7,11 @@ Fluxo de trabalho da tarefa:
             lemma POS frequencia_no_corpus num_syntets lista_syntets (separada por #)
 
     2. Criação de um corpora simples e outro complexo a partir dos corpus.
+    
+    3. Geração das listas de palavras que estão contidas apenas nos corpus simples
+    e daquelas contidas apenas nos corpus complexos.
 
-    3. Calcular diversas medidas:
+    4. Calcular diversas medidas:
 
         a) Comprimento do lemma
         
@@ -33,4 +36,5 @@ Fluxo de trabalho da tarefa:
 
         g) Número de significados semelhantes (synstets)
     
-    4. Gerar um arquivo de saída em formato arff (virgulas)
+    5. Gerar um arquivo de saída em formato arff (virgulas) que representa um 
+    vetor de features daqueles lemmas.
