@@ -1,0 +1,36 @@
+Fluxo de trabalho da tarefa:
+
+    1. Leitura de listas de frequência de corpus considerados simples e complexos, 
+    e de corpus para geração de um baseline (Childes, brwac).
+
+        a) Padrão de entrada das listas de frequência:
+            lemma POS frequencia_no_corpus num_syntets lista_syntets (separada por #)
+
+    2. Criação de um corpora simples e outro complexo a partir dos corpus.
+
+    3. Calcular diversas medidas:
+
+        a) Comprimento do lemma
+        
+        b) Frequencia do lemma dito simples relativa ao corpora simples, e frequencia 
+        do lemma dito complexo relativa ao corpora complexo
+        
+        c) Frequencia do lemma relativa ao conjunto total de corpora
+        
+        d) Probabilidade do lemma ser simples em relação ao total de corpora e 
+        probabilidade do lemma ser complexo em relação ao total de corpora:
+            P = Frequencia da palavra no seu corpus/Tamanho do corpora total
+        
+        e) Probabilidade do lemma ser simples em relação ao corpora simples e 
+        probabilidade do lemma ser complexo em relação ao corpora complexo:
+            P = Frequencia da palavra no seu corpus/Tamanho do corpora
+        
+        f) Razão de probabilidades, do simples em relação ao simples e ao complexo, 
+        e do complexo em relação ao simples e ao complexo:
+            S = Probabilidade de ser simples
+            C = Probabilidade de ser complexo
+            RS = S / (S + C) e RC = C / (S + C)
+
+        g) Número de significados semelhantes (synstets)
+    
+    4. Gerar um arquivo de saída em formato arff (virgulas)
